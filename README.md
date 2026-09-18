@@ -41,6 +41,11 @@ The package is a module like any other, there is no service provider to discover
 | `pnpm install` | `node_modules` exists |
 | `pnpm add react react-dom` and `pnpm add -D @vitejs/plugin-react @types/react @types/react-dom` | `package.json` lists them |
 | `pnpm dlx shadcn@latest init --template laravel --defaults` | `components.json` exists |
+| `pnpm add react-router@^7 @base-ui/react class-variance-authority cn lucide-react` | `package.json` lists them |
+| copies the shadcn/ui components the admin is written against into `resources/js/components/ui` and `resources/js/hooks` | the component is there and is the same |
+| adds `@source '../../vendor/protibimbok/laramod-admin/resources/js';` to the stylesheet `components.json` names | the line is there |
+
+The application has one copy of every component: the admin, your modules' pages and your own code import the same `@/components/ui/button`, so a component that holds state, like the sidebar, is never there twice. A component you have changed is kept and reported, `php artisan admin:init --force` overwrites it with the admin's. What `shadcn init` has just written is replaced without asking.
 
 ### TypeScript comes first
 
