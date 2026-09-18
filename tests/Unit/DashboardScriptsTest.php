@@ -33,15 +33,16 @@ class DashboardScriptsTest extends TestCase
         ], $this->app->make(DashboardScripts::class)->entries());
     }
 
-    public function test_urls_are_loaded_as_they_are_and_are_no_entries(): void
+    public function test_script_urls_come_from_their_own_contract_and_are_no_entries(): void
     {
-        Modules::register(new DashboardModule(
-            'blog', ['resources/js/dashboard.tsx'], ['https://cdn.example.com/chart.js', 'resources/js/dashboard.tsx'],
-        ));
+        Modules::register([
+            new DashboardModule('blog', ['resources/js/dashboard.tsx'], ['resources/js/dashboard.tsx'], ['https://cdn.example.com/chart.js']),
+            new DashboardModule('shop', [], [], ['https://cdn.example.com/map.js']),
+        ]);
 
         $scripts = $this->app->make(DashboardScripts::class);
 
-        $this->assertSame(['https://cdn.example.com/chart.js'], $scripts->urls());
+        $this->assertSame(['https://cdn.example.com/chart.js', 'https://cdn.example.com/map.js'], $scripts->urls());
         $this->assertSame('Modules/Blog/resources/js/dashboard.tsx', $scripts->entries()[0]);
         $this->assertCount(2, $scripts->entries());
     }

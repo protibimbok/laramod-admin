@@ -24,6 +24,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function defineEnvironment($app): void
     {
+        $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
+
         $app->afterResolving(ModuleRegistry::class, function (ModuleRegistry $registry): void {
             $registry->register(AdminModule::class);
         });

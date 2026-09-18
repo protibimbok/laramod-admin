@@ -4,6 +4,7 @@ namespace Laramod\Admin;
 
 use InvalidArgumentException;
 use Laramod\Admin\Contracts\ProvidesDashboardScripts;
+use Laramod\Admin\Contracts\ProvidesDashboardScriptUrls;
 use Laramod\Contracts\Module;
 use Laramod\Contracts\ProvidesViteEntries;
 use Laramod\ModuleRegistry;
@@ -27,7 +28,7 @@ class DashboardScripts
         foreach ($this->modules->providing(ProvidesDashboardScripts::class) as $module) {
             $names = $this->names($module);
 
-            foreach ($this->scripts($module, url: false) as $script) {
+            foreach ($module->dashboardScripts() as $script) {
                 $entries[] = $names[$script] ?? throw new InvalidArgumentException(sprintf(
                     'Dashboard script [%s] is not declared by [%s::viteEntries()].', $script, $module::class,
                 ));
@@ -38,7 +39,7 @@ class DashboardScripts
     }
 
     /**
-     * Get the scripts that are loaded from where they are, outside the application's build.
+     * Get the URLs of the scripts that are loaded from where they are, outside the application's build.
      *
      * @return list<string>
      */
@@ -46,28 +47,11 @@ class DashboardScripts
     {
         $urls = [];
 
-        foreach ($this->modules->providing(ProvidesDashboardScripts::class) as $module) {
-            $urls = [...$urls, ...$this->scripts($module, url: true)];
+        foreach ($this->modules->providing(ProvidesDashboardScriptUrls::class) as $module) {
+            $urls = [...$urls, ...$module->dashboardScriptUrls()];
         }
 
         return $urls;
-    }
-
-    /**
-     * Get the module's dashboard scripts that are URLs, or those that are not.
-     *
-     * @return list<string>
-     */
-    protected function scripts(Module $module, bool $url): array
-    {
-        if (! $module instanceof ProvidesDashboardScripts) {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $module->dashboardScripts(),
-            fn (string $script): bool => (preg_match('#^https?://#i', $script) === 1) === $url,
-        ));
     }
 
     /**

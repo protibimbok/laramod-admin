@@ -3,12 +3,18 @@
 namespace Laramod\Admin;
 
 use Illuminate\Console\Command;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Config;
 use Laramod\Admin\Console\InitCommand;
+use Laramod\Admin\Http\Controllers\AdminController;
 use Laramod\Contracts\Module;
 use Laramod\Contracts\ProvidesCommands;
+use Laramod\Contracts\ProvidesConfig;
+use Laramod\Contracts\ProvidesRoutes;
+use Laramod\Contracts\ProvidesViews;
 use Laramod\Contracts\ProvidesViteEntries;
 
-class AdminModule implements Module, ProvidesCommands, ProvidesViteEntries
+class AdminModule implements Module, ProvidesCommands, ProvidesConfig, ProvidesRoutes, ProvidesViews, ProvidesViteEntries
 {
     /**
      * The entry that mounts the admin, once every dashboard script has run.
@@ -39,6 +45,38 @@ class AdminModule implements Module, ProvidesCommands, ProvidesViteEntries
     public function commands(): array
     {
         return [InitCommand::class];
+    }
+
+    /**
+     * Get the module's configuration files, keyed by the configuration key they are merged into.
+     *
+     * @return array<string, string>
+     */
+    public function config(): array
+    {
+        return ['modules.admin' => 'config/admin.php'];
+    }
+
+    /**
+     * Register the one route of the admin: every URL beneath its path shows the page it mounts in.
+     *
+     * It is a fallback route, so a route of the application or of a module beneath the same path wins.
+     */
+    public function routes(Router $router): void
+    {
+        $router->get(trim(Config::get('modules.admin.path'), '/').'/{any?}', AdminController::class)
+            ->where('any', '.*')
+            ->middleware(Config::get('modules.admin.middleware'))
+            ->name('admin')
+            ->fallback();
+    }
+
+    /**
+     * Get the directory of the module's views.
+     */
+    public function views(): string
+    {
+        return 'resources/views';
     }
 
     /**
