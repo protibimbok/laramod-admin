@@ -1,0 +1,53 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "protibimbok/laramod-admin",
+    "description": "A laramod module: a React, TypeScript and shadcn/ui admin.",
+    "keywords": ["laravel", "laramod", "admin", "react", "shadcn"],
+    "license": "MIT",
+    "homepage": "https://github.com/protibimbok/laramod-admin",
+    "support": {
+        "issues": "https://github.com/protibimbok/laramod-admin/issues",
+        "source": "https://github.com/protibimbok/laramod-admin"
+    },
+    "type": "composer-plugin",
+    "authors": [
+        {
+            "name": "Saad",
+            "email": "sakib.saad.khan@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "composer-plugin-api": "^2.0",
+        "laravel/framework": "^13.0",
+        "protibimbok/laramod": "^0.1.1"
+    },
+    "require-dev": {
+        "composer/composer": "^2.0",
+        "laravel/pint": "^1.27",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laramod\\Admin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laramod\\Admin\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "lint": "@php vendor/bin/pint"
+    },
+    "extra": {
+        "class": "Laramod\\Admin\\ComposerPlugin"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
