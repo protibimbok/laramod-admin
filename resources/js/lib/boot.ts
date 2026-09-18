@@ -5,7 +5,9 @@ export interface Viewer {
 }
 
 interface Boot {
+  appName: string
   basePath: string
+  logoutUrl: string | null
   viewer: Viewer | null
 }
 
@@ -17,4 +19,4 @@ function read(): Boot {
   return JSON.parse(boot) as Boot
 }
 
-export const { basePath, viewer } = read()
+export const { appName, basePath, logoutUrl, viewer } = read()

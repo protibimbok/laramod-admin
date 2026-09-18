@@ -7,6 +7,7 @@ use Laramod\Admin\Tests\Fixtures\DashboardModule;
 use Laramod\Admin\Tests\TestCase;
 use Laramod\Facades\Modules;
 use Orchestra\Testbench\Attributes\DefineEnvironment;
+use Orchestra\Testbench\Attributes\DefineRoute;
 
 class AdminShellTest extends TestCase
 {
@@ -24,6 +25,11 @@ class AdminShellTest extends TestCase
     {
         $router->get('login', fn () => 'login')->name('login');
         $router->get('admin/ping', fn () => 'pong');
+    }
+
+    protected function usesLogoutRoute($router): void
+    {
+        $router->post('logout', fn () => 'bye')->name('logout');
     }
 
     protected function usesCustomPath($app): void
@@ -53,8 +59,20 @@ class AdminShellTest extends TestCase
     {
         $boot = $this->actingAs($this->user())->get('admin/posts')->viewData('boot');
 
+        $this->assertSame('Laravel', $boot['appName']);
         $this->assertSame('/admin', $boot['basePath']);
         $this->assertSame(['id' => 7, 'name' => 'Saad', 'email' => 'saad@example.com'], $boot['viewer']);
+    }
+
+    public function test_the_page_offers_no_sign_out_without_a_logout_route(): void
+    {
+        $this->assertNull($this->actingAs($this->user())->get('admin')->viewData('boot')['logoutUrl']);
+    }
+
+    #[DefineRoute('usesLogoutRoute')]
+    public function test_the_page_offers_the_logout_route_of_the_application(): void
+    {
+        $this->assertSame('http://localhost/logout', $this->actingAs($this->user())->get('admin')->viewData('boot')['logoutUrl']);
     }
 
     public function test_the_page_loads_the_dashboard_scripts_of_the_modules(): void
