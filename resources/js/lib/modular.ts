@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import type { RouteObject } from 'react-router'
 import type { Viewer } from './boot'
 
@@ -22,6 +23,11 @@ export interface ModuleRegistration {
   order?: number
   menuFilter?: MenuFilter
   routes?: RouteObject[]
+  /**
+   * Rendered for as long as the admin is, whatever page is shown: the fills of the slots
+   * that are not on a page of the module itself, <DashboardWidgets.Fill> for example.
+   */
+  fills?: ReactNode
 }
 
 const modules: ModuleRegistration[] = []

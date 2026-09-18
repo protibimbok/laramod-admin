@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Outlet, useLocation } from 'react-router'
 
 import {
@@ -11,8 +12,9 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 import { appName, viewer } from '../lib/boot'
-import { findMenuLocation } from '../lib/modular'
+import { findMenuLocation, getModules } from '../lib/modular'
 import { AppSidebar } from './AppSidebar'
+import { DashboardWidgets } from './DashboardWidgets'
 import { HeaderActions } from './HeaderActions'
 
 function PageBreadcrumb() {
@@ -41,24 +43,31 @@ export function Layout() {
     // Exactly one viewport tall: pages scroll inside the content area, never the window.
     <SidebarProvider className="h-svh overflow-hidden">
       <HeaderActions.Provider>
-        <AppSidebar />
+        <DashboardWidgets.Provider>
+          <AppSidebar />
 
-        <SidebarInset className="min-w-0 overflow-hidden">
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 self-center! data-[orientation=vertical]:h-4"
-            />
-            <PageBreadcrumb />
+          <SidebarInset className="min-w-0 overflow-hidden">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 self-center! data-[orientation=vertical]:h-4"
+              />
+              <PageBreadcrumb />
 
-            <HeaderActions.Outlet className="ml-auto flex min-w-0 items-center gap-2" />
-          </header>
+              <HeaderActions.Outlet className="ml-auto flex min-w-0 items-center gap-2" />
+            </header>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
-            <Outlet />
-          </div>
-        </SidebarInset>
+            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
+              <Outlet />
+            </div>
+          </SidebarInset>
+
+          {/* Inside the providers and always mounted, so a module can fill a slot of a page that is not its own. */}
+          {getModules().map((module) => (
+            <Fragment key={module.id}>{module.fills}</Fragment>
+          ))}
+        </DashboardWidgets.Provider>
       </HeaderActions.Provider>
     </SidebarProvider>
   )

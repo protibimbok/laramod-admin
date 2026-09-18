@@ -99,6 +99,36 @@ describe('the admin', () => {
     expect(element.querySelector('[data-sidebar="menu-button"][data-active]')?.textContent).toBe('Posts')
   })
 
+  it('shows the fills of a module on the dashboard, whatever page the module has', async () => {
+    const { element, visit, registerModule, DashboardWidgets } = await admin({})
+
+    registerModule({
+      id: 'shop',
+      order: 1,
+      fills: <DashboardWidgets.Fill>Orders today</DashboardWidgets.Fill>,
+    })
+    registerModule({
+      id: 'blog',
+      routes: [{ path: 'posts', element: <h1>All posts</h1> }],
+      fills: (
+        <DashboardWidgets.Fill>
+          <p>Drafts</p>
+        </DashboardWidgets.Fill>
+      ),
+    })
+
+    visit('/dashboard')
+
+    const outlet = element.querySelector('h1 + div')
+    expect([...(outlet?.childNodes ?? [])].map((widget) => widget.textContent)).toEqual(['Drafts', 'Orders today'])
+
+    act(() => root.unmount())
+    visit('/posts')
+
+    expect(element.querySelector('h1')?.textContent).toBe('All posts')
+    expect(element.textContent).not.toContain('Drafts')
+  })
+
   it('says so when no module has a page at the address', async () => {
     const { element, visit } = await admin({})
 
