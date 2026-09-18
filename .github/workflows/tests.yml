@@ -33,3 +33,27 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+
+  js:
+    runs-on: ubuntu-latest
+
+    name: JS
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check types
+        run: pnpm tsc --noEmit
+
+      - name: Run tests
+        run: pnpm vitest run
