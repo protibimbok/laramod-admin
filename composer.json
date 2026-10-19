@@ -20,7 +20,7 @@
         "php": "^8.3",
         "composer-plugin-api": "^2.0",
         "laravel/framework": "^13.0",
-        "protibimbok/laramod": "^0.1.1"
+        "protibimbok/laramod": "^0.2.0"
     },
     "require-dev": {
         "composer/composer": "^2.0",

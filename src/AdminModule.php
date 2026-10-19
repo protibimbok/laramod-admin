@@ -3,8 +3,8 @@
 namespace Laramod\Admin;
 
 use Illuminate\Console\Command;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Laramod\Admin\Console\InitCommand;
 use Laramod\Admin\Http\Controllers\AdminController;
 use Laramod\Contracts\Module;
@@ -62,9 +62,9 @@ class AdminModule implements Module, ProvidesCommands, ProvidesConfig, ProvidesR
      *
      * It is a fallback route, so a route of the application or of a module beneath the same path wins.
      */
-    public function routes(Router $router): void
+    public function routes(): void
     {
-        $router->get(trim(Config::get('modules.admin.path'), '/').'/{any?}', AdminController::class)
+        Route::get(trim(Config::get('modules.admin.path'), '/').'/{any?}', AdminController::class)
             ->where('any', '.*')
             ->middleware(Config::get('modules.admin.middleware'))
             ->name('admin')
